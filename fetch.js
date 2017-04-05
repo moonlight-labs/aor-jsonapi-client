@@ -1,16 +1,28 @@
-import HttpError from './HttpError';
+class HttpError extends Error {
+    constructor(message, status) {
+        super(message);
+        this.message = message;
+        this.status = status;
+        this.name = this.constructor.name;
+        if (typeof Error.captureStackTrace === 'function') {
+            Error.captureStackTrace(this, this.constructor);
+        } else {
+            this.stack = (new Error(message)).stack;
+        }
+        this.stack = new Error().stack;
+    }
+}
 
 const fetchJson = (url, options = {}) => {
     const requestHeaders = options.headers || new Headers({
-        Accept: 'application/json',
+        'Accept': 'application/vnd.api+json',
     });
     if (!(options && options.body && options.body instanceof FormData)) {
-        requestHeaders.set('Content-Type', 'application/json');
+        requestHeaders.set('Content-Type', 'application/vnd.api+json');
     }
     if (options.user && options.user.authenticated && options.user.token) {
         requestHeaders.set('Authorization', options.user.token);
     }
-
     return fetch(url, { ...options, headers: requestHeaders })
         .then(response => response.text().then(text => ({
             status: response.status,
@@ -32,18 +44,9 @@ const fetchJson = (url, options = {}) => {
         });
 };
 
-
-//Add extra headers for JSON API
-export const jsonApiHttpClient = (url, options = {}) => {
+export default (url, options = {}) => {
     if (!options.headers) {
-        options.headers = new Headers({ Accept: 'application/json' });
+        options.headers = new Headers({ 'Accept': 'application/vnd.api+json' });
     }
     // add your own headers here
-    // check fetchUtils.fetchJson first if statement --> may need to modify (seems to be setting 'Content-Typ')
-    options.headers.set('Content-Type', 'application/vnd.api+json')
-    return fetchJson(url, options);
-}
-
-export const queryParameters = data => Object.keys(data)
-    .map(key => [key, data[key]].map(encodeURIComponent).join('='))
-    .join('&');
+    options.headers.set('Content-Type', 'application/vnd.api+json');

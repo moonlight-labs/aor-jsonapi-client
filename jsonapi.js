@@ -1,4 +1,5 @@
-import { queryParameters, jsonApiHttpClient } from './fetch';
+/* eslint-disable */
+import { queryParameters } from 'admin-on-rest/lib/util/fetch';
 import {
     GET_LIST,
     GET_ONE,
@@ -7,13 +8,11 @@ import {
     CREATE,
     UPDATE,
     DELETE,
-} from './types';
+} from 'admin-on-rest/lib/rest/types';
 
-/**
- * Maps admin-on-rest queries to JSON API
- */
+import jsonApiHttpClient from './fetch';
 
- export default (apiUrl, httpClient = jsonApiHttpClient) => {
+export default (apiUrl, httpClient = jsonApiHttpClient) => {
     /**
      * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
      * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -25,13 +24,18 @@ import {
         const options = {};
         switch (type) {
         case GET_LIST:
-            //don't deal with filter, assume sort only gets one field specified for now
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
+            const { name, value } = params.filter;
             var query = {
                 'page[offset]': (page - 1) * perPage,
-                'page[limit]': perPage,
+                'page[limit]': perPage, 
             };
+            //add filters
+            Object.keys(params.filter).forEach(key =>{
+                var filterField = 'filter[' + key +']';
+                query[filterField] = params.filter[key];
+            })
             if (order === 'ASC'){
                 query.sort = field;
             }else{
@@ -43,22 +47,26 @@ import {
             url = `${apiUrl}/${resource}/${params.id}`;
             break;
         case GET_MANY:
-            // const ids = params.ids;
-            // const query = {filter: ids.toString()};
-            // url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+            const query = {'filter[id]': params.ids.toString() };
+            url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+            console.log('GET_MANY url');
+            console.log(url);
             break;
         case GET_MANY_REFERENCE: 
+
             break;
         case UPDATE:
             url = `${apiUrl}/${resource}/${params.id}`;
             options.method = 'PATCH';
-            const updateParams = {type: resource, id: params.id, attributes: params.data}
+            var attrs = {};
+            Object.keys(params.data.attributes).forEach(key => attrs[key] = params.data[key]);
+            const updateParams = {data:{type: resource, id: params.id, attributes: attrs}};
             options.body = JSON.stringify(updateParams);
             break;
         case CREATE:
             url = `${apiUrl}/${resource}`;
-            options.method = 'PUT';
-            const createParams = {type: resource, attributes: params.data, }
+            options.method = 'POST';
+            const createParams = {data: {type: resource, attributes: params.data }};
             options.body = JSON.stringify(createParams);
             break;
         case DELETE:
@@ -80,19 +88,17 @@ import {
      */
     const convertHTTPResponseToREST = (response, type, resource, params) => {
         const { headers, json } = response;
-        console.log(headers);
         switch (type) {
         case GET_LIST: 
-            // incorrect way of calculating total. 
-            return {data: json.data, total: json.data.length};
+            const jsonData = json.data.map(dic => Object.assign({id: dic.id}, dic.attributes));
+            return {data: jsonData, total: json.meta['record-count']};
         case GET_MANY_REFERENCE: 
             return ;
         case UPDATE:
         case CREATE:
             return { data: Object.assign({id: json.data.id}, json.data.attributes) };
         case DELETE:
-            //does JSON API return the deleted object?
-            return { data: json};
+            return {data: json}
         default:
             return {data:json.data};
         }
@@ -110,3 +116,4 @@ import {
             .then(response => convertHTTPResponseToREST(response, type, resource, params));
     };
 };
+
