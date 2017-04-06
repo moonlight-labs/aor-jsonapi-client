@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { queryParameters } from 'admin-on-rest/lib/util/fetch';
 import {
     GET_LIST,
     GET_ONE,
@@ -8,9 +7,9 @@ import {
     CREATE,
     UPDATE,
     DELETE,
-} from 'admin-on-rest/lib/rest/types';
+} from './types';
 
-import jsonApiHttpClient from './fetch';
+import {jsonApiHttpClient, queryParameters } from './fetch';
 
 export default (apiUrl, httpClient = jsonApiHttpClient) => {
     /**

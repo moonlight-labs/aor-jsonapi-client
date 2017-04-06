@@ -1,0 +1,40 @@
+{
+  "name": "aor-jsonapi-client",
+  "version": "0.1.0",
+  "description": "JSON API REST Client for Admin-on-rest",
+  "main": "./src/restClient.js",
+  "scripts": {
+    "test": "echo \\\\\\\"Error: no test specified\\\\\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moonlight-labs/aor-jsonapi-client.git"
+  },
+  "keywords": [
+    "react",
+    "admin-on-rest",
+    "json-api",
+    "rest-client"
+  ],
+  "author": "Max Schridde",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moonlight-labs/aor-jsonapi-client/issues"
+  },
+  "homepage": "https://github.com/moonlight-labs/aor-jsonapi-client#readme",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "admin-on-rest": "^0.9.4",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "webpack": "^2.3.3",
+    "webpack-dev-server": "^2.4.2"
+  }
+}

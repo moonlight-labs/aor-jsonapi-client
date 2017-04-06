@@ -1,17 +1,4 @@
-class HttpError extends Error {
-    constructor(message, status) {
-        super(message);
-        this.message = message;
-        this.status = status;
-        this.name = this.constructor.name;
-        if (typeof Error.captureStackTrace === 'function') {
-            Error.captureStackTrace(this, this.constructor);
-        } else {
-            this.stack = (new Error(message)).stack;
-        }
-        this.stack = new Error().stack;
-    }
-}
+import HttpError from './HttpError';
 
 const fetchJson = (url, options = {}) => {
     const requestHeaders = options.headers || new Headers({
@@ -44,9 +31,15 @@ const fetchJson = (url, options = {}) => {
         });
 };
 
-export default (url, options = {}) => {
+export const jsonApiHttpClient = (url, options = {}) => {
     if (!options.headers) {
         options.headers = new Headers({ 'Accept': 'application/vnd.api+json' });
     }
     // add your own headers here
     options.headers.set('Content-Type', 'application/vnd.api+json');
+    return fetchJson(url, options);
+}
+
+export const queryParameters = data => Object.keys(data)
+    .map(key => [key, data[key]].map(encodeURIComponent).join('='))
+    .join('&');
