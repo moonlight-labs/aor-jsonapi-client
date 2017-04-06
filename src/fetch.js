@@ -35,7 +35,6 @@ export const jsonApiHttpClient = (url, options = {}) => {
     if (!options.headers) {
         options.headers = new Headers({ 'Accept': 'application/vnd.api+json' });
     }
-    // add your own headers here
     options.headers.set('Content-Type', 'application/vnd.api+json');
     return fetchJson(url, options);
 }

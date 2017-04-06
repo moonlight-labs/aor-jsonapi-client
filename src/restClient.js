@@ -30,7 +30,6 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
                 'page[offset]': (page - 1) * perPage,
                 'page[limit]': perPage, 
             };
-            //add filters
             Object.keys(params.filter).forEach(key =>{
                 var filterField = 'filter[' + key +']';
                 query[filterField] = params.filter[key];
@@ -48,8 +47,6 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
         case GET_MANY:
             const query = {'filter[id]': params.ids.toString() };
             url = `${apiUrl}/${resource}?${queryParameters(query)}`;
-            console.log('GET_MANY url');
-            console.log(url);
             break;
         case GET_MANY_REFERENCE: 
 
