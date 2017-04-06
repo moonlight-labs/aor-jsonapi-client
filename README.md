@@ -9,6 +9,10 @@ using:
 ```sh
 npm install --save-dev aor-jsonapi-client
 ```
+It can also be installed using yarn:
+```sh
+yarn add aor-jsonapi-client
+```
 
 ## Usage
 
