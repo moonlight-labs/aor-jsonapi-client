@@ -1,5 +1,5 @@
 # JSON API REST client for Admin-on-rest.
-For using JSON API with admin-on-rest, use the aor-jsonapi-client restClient function to convert AOR's REST dialect into one compatible with JSON API.
+A JSONAPI compatible adapter for Admin-on-REST that allows for rapidly building admin interfaces in React using the AOR framework.
 
 ## Installation
 
