@@ -85,11 +85,34 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
     const convertHTTPResponseToREST = (response, type, resource, params) => {
         const { headers, json } = response;
         switch (type) {
-        case GET_LIST: 
-            const jsonData = json.data.map(dic => Object.assign({id: dic.id}, dic.attributes));
-            return {data: jsonData, total: json.meta['record-count']};
-        case GET_MANY_REFERENCE: 
-            return ;
+        case GET_LIST:
+            var jsonData = json.data.map(function (dic) {
+                var interDic = Object.assign({ id: dic.id }, dic.attributes);
+                if (dic.relationships){
+                    Object.keys(dic.relationships).forEach(function(key){
+                        var keyString = key + '_id';
+                        if (dic.relationships[key].data){
+                            //if relationships have a data field --> assume id in data field
+                            interDic[keyString] = dic.relationships[key].data.id;
+                        }else if (dic.relationships[key].links){
+                            //if relationships have a link field
+                            var link = dic.relationships[key].links['self'];
+                            httpClient(link).then(function (response) {
+                                interDic[key] = {'data': response.json.data, 'count': response.json.data.length};
+                                interDic['count'] = response.json.data.length;
+                            });
+
+                        }
+                    })
+                }
+                return interDic;
+            });
+            return { data: jsonData, total: json.meta['record-count'] };
+        case GET_MANY:
+                jsonData = json.data.map(function(obj){
+                    return Object.assign({id: obj.id}, obj.attributes);
+                })
+                return {data: jsonData}
         case UPDATE:
         case CREATE:
             return { data: Object.assign({id: json.data.id}, json.data.attributes) };
