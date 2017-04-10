@@ -22,6 +22,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
         let url = '';
         const options = {};
         switch (type) {
+        case GET_MANY_REFERENCE:
         case GET_LIST:
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
@@ -51,9 +52,6 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
         case GET_MANY:
             const query = {'filter[id]': params.ids.toString() };
             url = `${apiUrl}/${resource}?${queryParameters(query)}`;
-            break;
-        case GET_MANY_REFERENCE: 
-
             break;
         case UPDATE:
             url = `${apiUrl}/${resource}/${params.id}`;
