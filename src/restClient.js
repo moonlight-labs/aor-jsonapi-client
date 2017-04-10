@@ -36,7 +36,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
             })
             if (type === 'GET_MANY_REFERENCE'){
                 const targetFilter = 'filter[' + params.target + ']';
-                _uery[targetFilter] = params.id;
+                query[targetFilter] = params.id;
             }
             if (order === 'ASC'){
                 query.sort = field;
@@ -92,7 +92,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
         case GET_MANY_REFERENCE:
         case GET_LIST:
             var jsonData = json.data.map(function (dic) {
-                var interDic = Object.assign({ id: dic.id }, dic.attributes);
+                var interDic = Object.assign({ id: dic.id }, dic.attributes, dic.meta);
                 if (dic.relationships){
                     Object.keys(dic.relationships).forEach(function(key){
                         var keyString = key + '_id';
@@ -106,7 +106,6 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
                                 interDic[key] = {'data': response.json.data, 'count': response.json.data.length};
                                 interDic['count'] = response.json.data.length;
                             });
-
                         }
                     })
                 }
