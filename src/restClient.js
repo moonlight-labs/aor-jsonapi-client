@@ -34,6 +34,10 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
                 var filterField = 'filter[' + key +']';
                 query[filterField] = params.filter[key];
             })
+            if (type === 'GET_MANY_REFERENCE'){
+                const targetFilter = 'filter[' + params.target + ']';
+                _uery[targetFilter] = params.id;
+            }
             if (order === 'ASC'){
                 query.sort = field;
             }else{
@@ -85,6 +89,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
     const convertHTTPResponseToREST = (response, type, resource, params) => {
         const { headers, json } = response;
         switch (type) {
+        case GET_MANY_REFERENCE:
         case GET_LIST:
             var jsonData = json.data.map(function (dic) {
                 var interDic = Object.assign({ id: dic.id }, dic.attributes);
