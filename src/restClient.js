@@ -57,7 +57,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
             url = `${apiUrl}/${resource}/${params.id}`;
             options.method = 'PATCH';
             var attrs = {};
-            Object.keys(params.data.attributes).forEach(key => attrs[key] = params.data[key]);
+            Object.keys(params.data).forEach(key => attrs[key] = params.data[key]);
             const updateParams = {data:{type: resource, id: params.id, attributes: attrs}};
             options.body = JSON.stringify(updateParams);
             break;
