@@ -1,13 +1,11 @@
 {
   "name": "aor-jsonapi-client",
-  "version": "0.1.15",
+  "version": "0.2.0",
   "description": "JSON API REST Client for Admin-on-rest",
-  "main": "./src/restClient.js",
+  "main": "./build/restClient.js",
   "scripts": {
-    "babel1": "babel --presets es2015 src/restClient.js -o build/restClient.js",
-    "babel2": "babel --presets es2015 src/fetch.js -o build/fetch.js",
-    "babel3": "babel --presets es2015 src/types.js -o build/types.js",
-    "babel4": "babel --presets es2015 src/HttpError.js -o build/HttpError.js",
+    "build": "babel --presets es2015 src --out-dir build",
+    "prepare": "npm run build",
     "test": "echo \\\\\\\"Error: no test specified\\\\\\\" && exit 1"
   },
   "repository": {
@@ -29,11 +27,15 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-core": "^6.24.0",
-    "babel-loader": "^6.4.1",
+    "babel-loader": "^7.1.2",
     "babel-plugin-syntax-object-rest-spread": "^6.13.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015": "^6.24.0",
-    "babel-preset-react": "^6.23.0"
+    "babel-preset-react": "^6.23.0",
+    "eslint-config-prettier": "^2.9.0"
+  },
+  "engines": {
+    "npm": ">=4.0.0"
   }
 }
