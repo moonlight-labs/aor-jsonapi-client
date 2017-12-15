@@ -8,6 +8,7 @@ import {
   DELETE
 } from "./types";
 
+import qs from "qs";
 import { jsonApiHttpClient, queryParameters } from "./fetch";
 
 export default (apiUrl, httpClient = jsonApiHttpClient) => {
@@ -26,31 +27,43 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
         const { name, value } = params.filter;
+
         var query = {
-          "page[size]": perPage,
-          "page[number]": page
+          page: {
+            size: perPage,
+            number: page || 0
+          }
         };
-        Object.keys(params.filter).forEach(key => {
-          var filterField = "filter[" + key + "]";
-          query[filterField] = params.filter[key];
-        });
-        if (type === "GET_MANY_REFERENCE") {
-          const targetFilter = "filter[" + params.target + "]";
-          query[targetFilter] = params.id;
+
+        if (params.filter) {
+          query.filter = params.filter;
         }
+
+        if (type === "GET_MANY_REFERENCE") {
+          // ...params.filter,
+          query.filter = {
+            [params.target]: params.id
+          };
+        }
+
         if (order === "ASC") {
           query.sort = field;
         } else {
           query.sort = "-" + field;
         }
-        url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+
+        url = `${apiUrl}/${resource}?${qs.stringify(query)}`;
         break;
+
       case GET_ONE:
         url = `${apiUrl}/${resource}/${params.id}`;
         break;
+
       case GET_MANY:
-        const query = { "filter[id]": params.ids.toString() };
-        url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+        const query = {
+          filter: { id: params.ids }
+        };
+        url = `${apiUrl}/${resource}?${qs.stringify(query)}`;
         break;
       case UPDATE:
         url = `${apiUrl}/${resource}/${params.id}`;
